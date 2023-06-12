@@ -44,12 +44,14 @@ fun HomeScreen(
     navController: NavHostController
 ) {
     val pokemons by viewModel.pokemons.collectAsState()
+    val pokemonCount : Int by viewModel.pokemonCount.observeAsState(initial = 0)
     // get activity
     val context = LocalContext.current
     val activity = context as Activity
     // load data
     Log.d("HOME_SCREEN", "+++++++++++++++++++++++++++++++++++++++")
     viewModel.setPokemons(activity)
+    viewModel.updatePokemonCount()
     Column(
     ) {
         TopBar(
@@ -59,6 +61,9 @@ fun HomeScreen(
             navController,
             1
         )
+        Column(){
+            Text("Publicaciones: ${pokemonCount}")
+        }
         LazyVerticalGrid(
             cells = GridCells.Fixed(5) // Specify the number of columns
         ) {

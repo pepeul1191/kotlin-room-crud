@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +20,9 @@ import pe.edu.ulima.dbaccess.configs.LocalDB
 import pe.edu.ulima.dbaccess.daos.ProfileKeyDao
 import pe.edu.ulima.dbaccess.models.beans.Pokemon
 import pe.edu.ulima.dbaccess.models.beans.ProfileKey
+import pe.edu.ulima.dbaccess.models.beans.User
 import pe.edu.ulima.dbaccess.services.PokemonService
+import pe.edu.ulima.dbaccess.services.UserService
 import retrofit2.awaitResponse
 import kotlin.concurrent.thread
 
@@ -28,9 +32,9 @@ class HomeViewModel: ViewModel() {
     fun setPokemons(newItems: List<Pokemon>) {
         _pokemons.value = newItems
     }
-
     fun setPokemons(activity: Activity) {
         val apiService = BackendClient.buildService(PokemonService::class.java)
+        val userApiService = BackendClient.buildService(UserService::class.java)
         viewModelScope.launch{
             try {
                 withContext(Dispatchers.IO) {
@@ -39,7 +43,12 @@ class HomeViewModel: ViewModel() {
                     val profileKeyDao: ProfileKeyDao = database.profileKeyDao()
                     val profileKey: ProfileKey? = profileKeyDao.getProfileUserById(1)
                     if (profileKey == null){
-                        val response = apiService.fetchAll("", "")
+                        // val response = apiService.fetchAll("", "")
+                        // acceder a db y traer el usuario logueado
+                        val userDao = database.userDao()
+                        val user: User = userDao.getUser()!!
+                        // traer los pokemons del servidor de ese usuario
+                        val response = userApiService.getPokemons(user.id)
                         if(response.code() == 200){
                             val pokemons: List<Pokemon> = response.body()!!
                             setPokemons(pokemons)
@@ -58,6 +67,19 @@ class HomeViewModel: ViewModel() {
                         "Error HTTP: No se pudo traer el pokemon",
                         Toast.LENGTH_SHORT
                     ).show()
+                }
+            }
+        }
+    }
+
+    private val _pokemonCount = MutableLiveData<Int>(0)
+    var pokemonCount: LiveData<Int> = _pokemonCount
+    fun updatePokemonCount(){
+        viewModelScope.launch{
+            withContext(Dispatchers.IO) {
+                pokemons.collect { myList ->
+                    val size = myList.size
+                    _pokemonCount.postValue(size)
                 }
             }
         }

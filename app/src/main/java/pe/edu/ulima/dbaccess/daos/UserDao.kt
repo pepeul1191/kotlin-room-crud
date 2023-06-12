@@ -3,6 +3,7 @@ package pe.edu.ulima.dbaccess.daos
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import pe.edu.ulima.dbaccess.models.beans.Pokemon
 import pe.edu.ulima.dbaccess.models.beans.User
 
 @Dao
@@ -15,4 +16,7 @@ interface UserDao {
 
     @Query("SELECT COUNT(*) FROM users")
     suspend fun getUserCount(): Int
+
+    @Query("SELECT * FROM users LIMIT 1")
+    suspend fun getUser(): User?
 }

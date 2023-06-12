@@ -12,4 +12,9 @@ import retrofit2.http.Query
 interface UserService {
     @POST("/user/validate")
     suspend  fun validate(@Body requestModel: UserValidate): Response<User>
+
+    @GET("/user/pokemon")
+    suspend fun getPokemons(
+        @Query("id") id: Int,
+    ): Response<List<Pokemon>>
 }
