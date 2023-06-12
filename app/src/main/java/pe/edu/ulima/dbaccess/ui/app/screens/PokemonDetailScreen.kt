@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
@@ -133,6 +135,7 @@ fun PokemonDetailScreen(
                     placeholder = {
                         Text(text = "")
                     },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.Transparent
@@ -150,6 +153,7 @@ fun PokemonDetailScreen(
                     placeholder = {
                         Text(text = "")
                     },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.Transparent
@@ -161,6 +165,7 @@ fun PokemonDetailScreen(
                         viewModel.updateHeight(it.toFloat())
                     },
                     modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     label = {
                         Text(text = "Estatura(m)")
                     },
@@ -179,11 +184,12 @@ fun PokemonDetailScreen(
                         .padding(top = 15.dp/*, start = 40.dp, end = 40.dp*/), // start -> izquierda, end -> derecha
                     onClick = {
                         Log.d("POKEMON_SCREEN", title)
-                        if(title.toUpperCase() == "Editar Pokemon"){
-                            Log.d("POKEMON_SCREEN", "Editar Pokemon")
-                            navController.navigate("/")
-                        }else if(title.toUpperCase() == "Crear Pokemon"){
+                        if(title == "Editar Pokemon"){
+                            viewModel.updatePokemon(context)
+                            //navController.navigate("/")
+                        }else if(title == "Crear Pokemon"){
                             Log.d("POKEMON_SCREEN", "Crear Pokemon")
+                            viewModel.createPokemon(context)
                             navController.navigate("/")
                         }
                     }
@@ -198,6 +204,7 @@ fun PokemonDetailScreen(
                             .padding(top = 15.dp/*, start = 40.dp, end = 40.dp*/), // start -> izquierda, end -> derecha
                         onClick = {
                             Log.d("POKEMON_SCREEN", "Borrar Pokemon")
+                            viewModel.deletePokemon(context)
                             navController.navigate("/")
                         }
                     ){

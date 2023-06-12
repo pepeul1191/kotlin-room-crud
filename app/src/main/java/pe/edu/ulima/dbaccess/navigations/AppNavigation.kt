@@ -72,6 +72,7 @@ fun AppNavigation(){
             )
         ){
             val viewModel: PokemonDetailViewModel = PokemonDetailViewModel()
+            viewModel.unSetPokemon(context)
             PokemonDetailScreen(
                 viewModel = viewModel,
                 navController
