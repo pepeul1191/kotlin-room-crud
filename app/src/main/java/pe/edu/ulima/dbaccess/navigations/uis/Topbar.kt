@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pe.edu.ulima.dbaccess.configs.LocalDB
+import pe.edu.ulima.dbaccess.daos.UserDao
 import kotlin.concurrent.thread
 
 @Preview
@@ -160,6 +161,9 @@ fun MoreAction(
                         pokemonDao.deleteAllPokemons()
                         val profileKeyDao = database.profileKeyDao()
                         profileKeyDao.deleteAllProfileKeys()
+                        // cerrar sesion borrando al usuario de la db
+                        val userDao: UserDao = database.userDao()
+                        userDao.deleteAll()
                         (context as? Activity)?.run { finishAffinity() }
                     }
                 }

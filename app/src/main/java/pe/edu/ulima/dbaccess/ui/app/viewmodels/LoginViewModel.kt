@@ -9,10 +9,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pe.edu.ulima.dbaccess.configs.BackendClient
+import pe.edu.ulima.dbaccess.configs.LocalDB
 import pe.edu.ulima.dbaccess.models.beans.Pokemon
 import pe.edu.ulima.dbaccess.models.beans.ProfileKey
 import pe.edu.ulima.dbaccess.models.beans.User
@@ -39,7 +41,7 @@ class LoginViewModel: ViewModel() {
         _message.postValue(it)
     }
 
-    public fun validate(context: Context){
+    public fun validate(context: Context, navController: NavHostController){
         viewModelScope.launch {
             val apiService = BackendClient.buildService(UserService::class.java)
             try {
@@ -48,6 +50,14 @@ class LoginViewModel: ViewModel() {
                     if (response.code() == 200) {
                         val user: User = response.body()!!
                         Log.d("LOGIN_VM", user.toString())
+                        val database = LocalDB.getDatabase(context)
+                        val userDao = database.userDao()
+                        userDao.deleteAll()
+                        userDao.insert(user)
+                        updateMessage("Usuario OK")
+                        withContext(Dispatchers.Main) {
+                            navController.navigate("/")
+                        }
                     }else if(response.code() == 500){
                         updateMessage("Usuario y contraseña no válidos")
                     }else{

@@ -106,7 +106,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .padding(top = 15.dp/*, start = 40.dp, end = 40.dp*/), // start -> izquierda, end -> derecha
                 onClick = {
-                    viewModel.validate(context)
+                    viewModel.validate(context, navController)
                 }
             ){
                 Text("INGRESAR")

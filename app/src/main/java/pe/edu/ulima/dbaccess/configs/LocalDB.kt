@@ -5,13 +5,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import pe.edu.ulima.dbaccess.daos.ProfileKeyDao
+import pe.edu.ulima.dbaccess.daos.UserDao
 import pe.edu.ulima.dbaccess.entities.PokemonDao
 import pe.edu.ulima.dbaccess.models.beans.Pokemon
 import pe.edu.ulima.dbaccess.models.beans.ProfileKey
+import pe.edu.ulima.dbaccess.models.beans.User
 
 @Database(
     entities = [
         Pokemon::class,
+        User::class,
     ProfileKey::class,
                ],
     version = 1,
@@ -21,6 +24,7 @@ abstract class LocalDB: RoomDatabase() {
     // daos
     abstract fun pokemonDao(): PokemonDao
     abstract fun profileKeyDao(): ProfileKeyDao
+    abstract fun userDao(): UserDao
 
     companion object{
         private var INSTANCE: LocalDB ?= null

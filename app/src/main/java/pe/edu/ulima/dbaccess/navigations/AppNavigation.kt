@@ -15,9 +15,11 @@ import androidx.navigation.navArgument
 import pe.edu.ulima.dbaccess.ui.app.screens.HomeScreen
 import pe.edu.ulima.dbaccess.ui.app.screens.LoginScreen
 import pe.edu.ulima.dbaccess.ui.app.screens.PokemonDetailScreen
+import pe.edu.ulima.dbaccess.ui.app.screens.SplashScreen
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.HomeViewModel
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.LoginViewModel
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.PokemonDetailViewModel
+import pe.edu.ulima.dbaccess.ui.app.viewmodels.SplashViewModel
 
 @Composable
 fun AppNavigation(){
@@ -35,8 +37,19 @@ fun AppNavigation(){
     */
     NavHost(
         navController = navController,
-        startDestination = "/login"
+        startDestination = "/splash"
     ){
+        // splash
+        composable(
+            route = "/splash",
+            arguments = listOf(
+            )
+        ){
+            SplashScreen(
+                viewModel = SplashViewModel(),
+                navController
+            )
+        }
         // login
         composable(
             route = "/login",
