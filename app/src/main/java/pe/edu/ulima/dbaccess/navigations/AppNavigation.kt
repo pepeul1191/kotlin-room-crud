@@ -12,14 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import pe.edu.ulima.dbaccess.ui.app.screens.HomeScreen
-import pe.edu.ulima.dbaccess.ui.app.screens.LoginScreen
-import pe.edu.ulima.dbaccess.ui.app.screens.PokemonDetailScreen
-import pe.edu.ulima.dbaccess.ui.app.screens.SplashScreen
-import pe.edu.ulima.dbaccess.ui.app.viewmodels.HomeViewModel
-import pe.edu.ulima.dbaccess.ui.app.viewmodels.LoginViewModel
-import pe.edu.ulima.dbaccess.ui.app.viewmodels.PokemonDetailViewModel
-import pe.edu.ulima.dbaccess.ui.app.viewmodels.SplashViewModel
+import pe.edu.ulima.dbaccess.ui.app.screens.*
+import pe.edu.ulima.dbaccess.ui.app.viewmodels.*
 
 @Composable
 fun AppNavigation(){
@@ -27,6 +21,7 @@ fun AppNavigation(){
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val pokemonIdParam = navBackStackEntry?.arguments?.getInt("pokemon_id")
     val context = LocalContext.current
+    val userId = navBackStackEntry?.arguments?.getInt("user_id")
     val activity = context as Activity
 
     /*
@@ -70,6 +65,20 @@ fun AppNavigation(){
 
             HomeScreen(
                 viewModel = HomeViewModel(),
+                navController
+            )
+        }
+        // profile
+        composable(
+            route = "/profile",
+            arguments = listOf(
+
+            )
+        ){
+            val viewModel: ProfileViewModel = ProfileViewModel()
+            viewModel.getUser(context)
+            ProfileScreen(
+                viewModel = viewModel,
                 navController
             )
         }

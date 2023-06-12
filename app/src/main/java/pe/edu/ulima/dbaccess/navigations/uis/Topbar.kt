@@ -145,7 +145,8 @@ fun MoreAction(
                 onClick = {
                     expanded = false
                     //context.startActivity(Intent(context, UploadActivity::class.java))
-                    navController.navigate("/profile/?user_id=$id")
+                    navController.navigate("/profile")
+                    //viewModel.goToProfile(context, navController)
                 }
             ){
                 Text(
