@@ -70,18 +70,23 @@ fun PokemonDetailScreen(
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                painter = rememberImagePainter(data = imageUrl),
-                contentDescription = name,
-                modifier = Modifier
-                    .size(80.dp)
-                    .padding(bottom = 10.dp),
-            )
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically)
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Image(
+                        painter = rememberImagePainter(data = imageUrl),
+                        contentDescription = name,
+                        modifier = Modifier
+                            .size(140.dp)
+                            .padding(bottom = 10.dp)
+                            .fillMaxSize(),
+                    )
+                }
                 TextField(
                     value = name,
                     onValueChange = {

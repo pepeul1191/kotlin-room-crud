@@ -25,11 +25,12 @@ fun AppNavigation(){
     val context = LocalContext.current
     val activity = context as Activity
 
+    /*
     HomeScreen(
         viewModel = HomeViewModel(),
         navController
     )
-    /*
+    */
     NavHost(
         navController = navController,
         startDestination = "/"
@@ -77,5 +78,4 @@ fun AppNavigation(){
             )
         }
     }
-    */
 }

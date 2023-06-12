@@ -62,7 +62,9 @@ fun HomeScreen(
         LazyVerticalGrid(
             cells = GridCells.Fixed(5) // Specify the number of columns
         ) {
+            println("LazyVerticalGrid 1")
             println(pokemons.toString())
+            println("LazyVerticalGrid 2")
             items(pokemons.size) { i ->
                 Image(
                     painter = rememberImagePainter(data = pokemons[i].imageUrl),
