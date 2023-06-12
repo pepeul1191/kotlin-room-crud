@@ -17,4 +17,14 @@ interface UserService {
     suspend fun getPokemons(
         @Query("id") id: Int,
     ): Response<List<Pokemon>>
+
+    @GET("/user/following")
+    suspend fun getFollowing(
+        @Query("user_id") id: Int,
+    ): Response<List<User>>
+
+    @GET("/user/follower")
+    suspend fun getFollower(
+        @Query("user_id") id: Int,
+    ): Response<List<User>>
 }

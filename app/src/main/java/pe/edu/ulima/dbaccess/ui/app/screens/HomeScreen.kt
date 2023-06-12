@@ -45,6 +45,8 @@ fun HomeScreen(
 ) {
     val pokemons by viewModel.pokemons.collectAsState()
     val pokemonCount : Int by viewModel.pokemonCount.observeAsState(initial = 0)
+    val followingCount : Int by viewModel.followingCount.observeAsState(initial = 0)
+    val followerCount : Int by viewModel.followerCount.observeAsState(initial = 0)
     // get activity
     val context = LocalContext.current
     val activity = context as Activity
@@ -52,6 +54,8 @@ fun HomeScreen(
     Log.d("HOME_SCREEN", "+++++++++++++++++++++++++++++++++++++++")
     viewModel.setPokemons(activity)
     viewModel.updatePokemonCount()
+    viewModel.updateFollowerCount(context)
+    viewModel.updateFollowingCount(context)
     Column(
     ) {
         TopBar(
@@ -63,6 +67,8 @@ fun HomeScreen(
         )
         Column(){
             Text("Publicaciones: ${pokemonCount}")
+            Text("Seguidores: ${followerCount}")
+            Text("Siguiendo: ${followingCount}")
         }
         LazyVerticalGrid(
             cells = GridCells.Fixed(5) // Specify the number of columns

@@ -27,6 +27,12 @@ import retrofit2.awaitResponse
 import kotlin.concurrent.thread
 
 class HomeViewModel: ViewModel() {
+    private val _userId = MutableLiveData<Int>(0)
+    var userId: LiveData<Int> = _userId
+    fun updateUserId(it: Int){
+        _userId.postValue(it)
+    }
+
     private var _pokemons = MutableStateFlow<List<Pokemon>>(emptyList())
     val pokemons: StateFlow<List<Pokemon>> get() = _pokemons
     fun setPokemons(newItems: List<Pokemon>) {
@@ -52,6 +58,7 @@ class HomeViewModel: ViewModel() {
                         if(response.code() == 200){
                             val pokemons: List<Pokemon> = response.body()!!
                             setPokemons(pokemons)
+                            updateUserId(user.id)
                             pokemonDao.insertMany(pokemons)
                             profileKeyDao.setFirstLoad(ProfileKey(userId = 1, firstLoad = true))
                         }
@@ -81,6 +88,68 @@ class HomeViewModel: ViewModel() {
                     val size = myList.size
                     _pokemonCount.postValue(size)
                 }
+            }
+        }
+    }
+
+    private val _followingCount = MutableLiveData<Int>(0)
+    var followingCount: LiveData<Int> = _followingCount
+    fun updateFollowingCount(context: Context){
+        val userApiService = BackendClient.buildService(UserService::class.java)
+        try{
+            viewModelScope.launch{
+                withContext(Dispatchers.IO) {
+                    val database = LocalDB.getDatabase(context)
+                    val userDao = database.userDao()
+                    val user: User = userDao.getUser()!!
+                    val response = userApiService.getFollowing(user.id)
+                    if(response.code() == 200){
+                        val users: List<User> = response.body()!!
+                        println(users.toString())
+                        _followingCount.postValue(users.size)
+                    }
+                }
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            val activity: Activity = context as Activity
+            activity.runOnUiThread{
+                Toast.makeText(
+                    activity,
+                    "Error HTTP: No se pudo traer la cantidad de personas que sigues",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private val _followerCount = MutableLiveData<Int>(0)
+    var followerCount: LiveData<Int> = _followerCount
+    fun updateFollowerCount(context: Context){
+        val userApiService = BackendClient.buildService(UserService::class.java)
+        try{
+            viewModelScope.launch{
+                withContext(Dispatchers.IO) {
+                    val database = LocalDB.getDatabase(context)
+                    val userDao = database.userDao()
+                    val user: User = userDao.getUser()!!
+                    val response = userApiService.getFollower(user.id)
+                    if(response.code() == 200){
+                        val users: List<User> = response.body()!!
+                        println(users.toString())
+                        _followerCount.postValue(users.size)
+                    }
+                }
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
+            val activity: Activity = context as Activity
+            activity.runOnUiThread{
+                Toast.makeText(
+                    activity,
+                    "Error HTTP: No se pudo traer la cantidad de personas que te siguen",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
