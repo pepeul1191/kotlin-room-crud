@@ -13,8 +13,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import pe.edu.ulima.dbaccess.ui.app.screens.HomeScreen
+import pe.edu.ulima.dbaccess.ui.app.screens.LoginScreen
 import pe.edu.ulima.dbaccess.ui.app.screens.PokemonDetailScreen
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.HomeViewModel
+import pe.edu.ulima.dbaccess.ui.app.viewmodels.LoginViewModel
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.PokemonDetailViewModel
 
 @Composable
@@ -33,8 +35,19 @@ fun AppNavigation(){
     */
     NavHost(
         navController = navController,
-        startDestination = "/"
+        startDestination = "/login"
     ){
+        // login
+        composable(
+            route = "/login",
+            arguments = listOf(
+            )
+        ){
+            LoginScreen(
+                viewModel = LoginViewModel(),
+                navController
+            )
+        }
         // vista para mostrar el listado de pokemones
         composable(
             route = "/",
