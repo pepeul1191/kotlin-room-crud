@@ -23,11 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.HomeViewModel
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.LoginViewModel
 import pe.edu.ulima.dbaccess.R as RE
@@ -52,14 +47,13 @@ fun LoginScreen(
     val password : String by viewModel.password.observeAsState(initial = "")
     val message : String by viewModel.message.observeAsState(initial = "")
     val signInResult = remember { mutableStateOf<Result<Unit>?>(null) }
-
+/*
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
                 val idToken = account?.idToken
-
                 // Authenticate with Firebase using the Google ID token
                 val credential = GoogleAuthProvider.getCredential(idToken, null)
                 FirebaseAuth.getInstance().signInWithCredential(credential)
@@ -75,6 +69,7 @@ fun LoginScreen(
             }
         }
     }
+    */
     // UI
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -153,12 +148,12 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .padding(top = 1.dp, /*start = 40.dp, end = 40.dp*/),
                 onClick = {
-                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    /*val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(RE.string.default_web_client_id.toString())
                         .requestEmail()
                         .build()
                     val signInClient = GoogleSignIn.getClient(context, gso)
-                    launcher.launch(signInClient.signInIntent)
+                    launcher.launch(signInClient.signInIntent)*/
                 },
                 //colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50)) ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = androidx.compose.ui.graphics.Color.Green)
