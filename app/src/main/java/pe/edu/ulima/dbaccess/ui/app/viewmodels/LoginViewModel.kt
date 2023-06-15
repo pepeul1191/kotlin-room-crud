@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pe.edu.ulima.dbaccess.configs.BackendClient
 import pe.edu.ulima.dbaccess.configs.LocalDB
+import pe.edu.ulima.dbaccess.exceptions.ErrorAccessLogin
 import pe.edu.ulima.dbaccess.models.beans.Pokemon
 import pe.edu.ulima.dbaccess.models.beans.ProfileKey
 import pe.edu.ulima.dbaccess.models.beans.User
@@ -45,6 +47,7 @@ class LoginViewModel: ViewModel() {
         viewModelScope.launch {
             val apiService = BackendClient.buildService(UserService::class.java)
             try {
+                FirebaseCrashlytics.getInstance().setCustomKey("HTTP_ERRORXD", "Servidor apagado?")
                 withContext(Dispatchers.IO) {
                     val response = apiService.validate(UserValidate(user.value!!, password.value!!))
                     if (response.code() == 200) {
@@ -59,6 +62,7 @@ class LoginViewModel: ViewModel() {
                             navController.navigate("/")
                         }
                     }else if(response.code() == 500){
+                        FirebaseCrashlytics.getInstance().recordException(ErrorAccessLogin("usuerio "+ user.value + " quiso entrar pero no pudo"))
                         updateMessage("Usuario y contraseña no válidos")
                     }else{
                         updateMessage("Ocurrió un error no esperado")
@@ -66,6 +70,11 @@ class LoginViewModel: ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                println("1 +++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                FirebaseCrashlytics.getInstance().recordException(e)
+                FirebaseCrashlytics.getInstance().setCustomKey("HTTP_ERROR", "Servidor apagado?")
+                FirebaseCrashlytics.getInstance().log("Custom log message")
+                println("2 +++++++++++++++++++++++++++++++++++++++++++++++++++++++")
                 val activity = context as Activity
                 activity.runOnUiThread {
                     Toast.makeText(

@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.FirebaseFirestore
 import pe.edu.ulima.dbaccess.navigations.AppNavigation
 import pe.edu.ulima.dbaccess.ui.theme.AccesoDBTheme
@@ -21,6 +22,7 @@ import pe.edu.ulima.dbaccess.ui.theme.AccesoDBTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         FirebaseApp.initializeApp(this)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         firebaseAnalytics.logEvent("button_click", Bundle().apply {
             putString("MainActivity", "Init")
