@@ -21,8 +21,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.HomeViewModel
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.LoginViewModel
 import pe.edu.ulima.dbaccess.R as RE
@@ -47,29 +51,22 @@ fun LoginScreen(
     val password : String by viewModel.password.observeAsState(initial = "")
     val message : String by viewModel.message.observeAsState(initial = "")
     val signInResult = remember { mutableStateOf<Result<Unit>?>(null) }
-/*
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                val idToken = account?.idToken
-                // Authenticate with Firebase using the Google ID token
-                val credential = GoogleAuthProvider.getCredential(idToken, null)
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                    .addOnCompleteListener { signInTask ->
-                        if (signInTask.isSuccessful) {
-                            signInResult.value = Result.success(Unit)
-                        } else {
-                            signInResult.value = Result.failure(signInTask.exception ?: Exception("Sign-in failed."))
-                        }
-                    }
-            } catch (e: ApiException) {
-                signInResult.value = Result.failure(e)
-            }
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        println("2 ++++++++++++++++++++++++++++++++++++++++++++")
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            // Handle the successful sign-in here
+            println(account.email)
+            println(account.familyName)
+            println(account.photoUrl)
+        } catch (e: ApiException) {
+            // Handle sign-in failure
+            println(e.stackTraceToString())
         }
     }
-    */
     // UI
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -148,12 +145,14 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .padding(top = 1.dp, /*start = 40.dp, end = 40.dp*/),
                 onClick = {
-                    /*val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(RE.string.default_web_client_id.toString())
+                    println("1 ++++++++++++++++++++++++++++++++++++++")
+                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken("400630042855-oon2jamp4s2u0o8r2due3vckm1u7ercq.apps.googleusercontent.com")
                         .requestEmail()
                         .build()
-                    val signInClient = GoogleSignIn.getClient(context, gso)
-                    launcher.launch(signInClient.signInIntent)*/
+                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                    val signInIntent = googleSignInClient.signInIntent
+                    googleSignInLauncher.launch(signInIntent)
                 },
                 //colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF4CAF50)) ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = androidx.compose.ui.graphics.Color.Green)

@@ -62,7 +62,7 @@ class LoginViewModel: ViewModel() {
                             navController.navigate("/")
                         }
                     }else if(response.code() == 500){
-                        FirebaseCrashlytics.getInstance().recordException(ErrorAccessLogin("usuerio "+ user.value + " quiso entrar pero no pudo"))
+                        FirebaseCrashlytics.getInstance().recordException(ErrorAccessLogin("usuario "+ user.value + " quiso entrar pero no pudo"))
                         updateMessage("Usuario y contraseña no válidos")
                     }else{
                         updateMessage("Ocurrió un error no esperado")
