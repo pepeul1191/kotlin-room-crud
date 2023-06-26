@@ -1,9 +1,15 @@
 package pe.edu.ulima.dbaccess.ui.app.screens
 
 import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,6 +23,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +64,19 @@ fun PokemonDetailScreen(
     val height: Float by viewModel.height.observeAsState(0f)
     val imageUrl: String by viewModel.imageUrl.observeAsState("")
     val title: String by viewModel.title.observeAsState("")
+    var bitMapImage: Bitmap? by viewModel::bitmap
+    // intent
+    val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            println("3 ++++++++++++++++++++++++++++++++++++")
+            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+            imageBitmap?.let { bitmap ->
+                println(bitmap)
+                viewModel.updateBitmap(bitmap)
+                viewModel.uploadImage(context)
+            }
+        }
+    }
 
     Column() {
         Row(
@@ -80,14 +101,25 @@ fun PokemonDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Image(
-                        painter = rememberImagePainter(data = imageUrl),
-                        contentDescription = name,
-                        modifier = Modifier
-                            .size(140.dp)
-                            .padding(bottom = 10.dp)
-                            .fillMaxSize(),
-                    )
+                    if(bitMapImage == null){
+                        Image(
+                            painter = rememberImagePainter(data = imageUrl),
+                            contentDescription = name,
+                            modifier = Modifier
+                                .size(140.dp)
+                                .padding(bottom = 10.dp)
+                                .fillMaxSize(),
+                        )
+                    }else{
+                        Image(
+                            bitmap = bitMapImage!!.asImageBitmap(),
+                            contentDescription = name,
+                            modifier = Modifier
+                                .size(140.dp)
+                                .padding(bottom = 10.dp)
+                                .fillMaxSize(),
+                        )
+                    }
                 }
                 TextField(
                     value = name,
@@ -178,6 +210,18 @@ fun PokemonDetailScreen(
                     )
                 )
                 // botones
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp/*, start = 40.dp, end = 40.dp*/), // start -> izquierda, end -> derecha
+                    onClick = {
+                        Log.d("POKEMON_SCREEN", title)
+                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        takePicture.launch(intent)
+                    }
+                ){
+                    Text("Tomar Foto".toUpperCase())
+                }
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()

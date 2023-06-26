@@ -2,8 +2,12 @@ package pe.edu.ulima.dbaccess.ui.app.viewmodels
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +15,17 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import pe.edu.ulima.dbaccess.configs.BackendClient
 import pe.edu.ulima.dbaccess.configs.LocalDB
 import pe.edu.ulima.dbaccess.models.beans.Pokemon
+import pe.edu.ulima.dbaccess.models.beans.User
+import pe.edu.ulima.dbaccess.services.PokemonService
+import pe.edu.ulima.dbaccess.services.UserService
+import java.io.ByteArrayOutputStream
 import kotlin.concurrent.thread
 
 class PokemonDetailViewModel: ViewModel() {
@@ -33,6 +46,12 @@ class PokemonDetailViewModel: ViewModel() {
     fun updateName(it: String){
         _name.postValue(it)
     }
+
+    var bitmap by mutableStateOf<Bitmap?>(null)
+    fun updateBitmap(newBitmap: Bitmap) {
+        bitmap = newBitmap
+    }
+
 
     private val _imageUrl = MutableLiveData<String>("")
     var imageUrl: LiveData<String> = _imageUrl
@@ -181,6 +200,42 @@ class PokemonDetailViewModel: ViewModel() {
                     Toast.makeText(
                         activity,
                         "Error: No se pudo actualizar el pokemon",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    fun uploadImage(context: Context){
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        val filePart: RequestBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+        val extraDataBody = RequestBody.create("text/plain".toMediaTypeOrNull(), this.id.toString())
+
+        viewModelScope.launch{
+            val pokemonApiService = BackendClient.buildService(PokemonService::class.java)
+            try{
+                withContext(Dispatchers.IO) {
+                    val charPool: List<Char> = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+                    val randomString = (1..20)
+                        .map { _ -> kotlin.random.Random.nextInt(0, charPool.size) }
+                        .map(charPool::get)
+                        .joinToString("")
+                    val response = pokemonApiService.uploadFile(
+                        MultipartBody.Part.createFormData("file", "$randomString.jpg", filePart),
+                        extraDataBody
+                    )
+
+                }
+            }catch (e: Exception){
+                e.printStackTrace()
+                val activity: Activity = context as Activity
+                activity.runOnUiThread{
+                    Toast.makeText(
+                        activity,
+                        "Error HTTP: No se subir la imagen",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
