@@ -27,6 +27,7 @@ import pe.edu.ulima.dbaccess.models.beans.Pokemon
 import pe.edu.ulima.dbaccess.navigations.uis.TopBar
 import pe.edu.ulima.dbaccess.ui.app.viewmodels.HomeViewModel
 import pe.edu.ulima.dbaccess.R
+import pe.edu.ulima.dbaccess.configs.GpsTrackerView
 
 @Composable
 @Preview
@@ -69,6 +70,7 @@ fun HomeScreen(
             Text("Publicaciones: ${pokemonCount}")
             Text("Seguidores: ${followerCount}")
             Text("Siguiendo: ${followingCount}")
+            GpsTrackerView(context)
         }
         LazyVerticalGrid(
             cells = GridCells.Fixed(5) // Specify the number of columns

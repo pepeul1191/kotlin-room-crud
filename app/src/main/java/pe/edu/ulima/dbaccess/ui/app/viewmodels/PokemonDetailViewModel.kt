@@ -227,7 +227,9 @@ class PokemonDetailViewModel: ViewModel() {
                         MultipartBody.Part.createFormData("file", "$randomString.jpg", filePart),
                         extraDataBody
                     )
-
+                    println("1 ++++++++++++++++++++++++++++++++++++")
+                    println(response)
+                    println("2 ++++++++++++++++++++++++++++++++++++")
                 }
             }catch (e: Exception){
                 e.printStackTrace()
