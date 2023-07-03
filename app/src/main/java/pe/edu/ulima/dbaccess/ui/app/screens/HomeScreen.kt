@@ -57,6 +57,8 @@ fun HomeScreen(
     viewModel.updatePokemonCount()
     viewModel.updateFollowerCount(context)
     viewModel.updateFollowingCount(context)
+    MapViewContainer(context)
+    /*
     Column(
     ) {
         TopBar(
@@ -109,4 +111,5 @@ fun HomeScreen(
             modifier = Modifier.padding(20.dp)
         )
     }
+    */
 }
